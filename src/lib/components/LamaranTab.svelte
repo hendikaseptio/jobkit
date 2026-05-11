@@ -1,7 +1,6 @@
 <script lang="ts">
     import { appState } from '$lib/appState.svelte';
     import { onMount } from 'svelte';
-    import { domToPng } from 'modern-screenshot';
 
     onMount(() => {
         if (!appState.lamaran.date) {
@@ -9,26 +8,6 @@
             appState.lamaran.date = `Jakarta, ${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
         }
     });
-
-    async function downloadAsImage() {
-        const element = document.getElementById('lamaran-preview');
-        if (!element) return;
-        
-        try {
-            const dataUrl = await domToPng(element, {
-                scale: 2,
-                backgroundColor: '#ffffff'
-            });
-            
-            const link = document.createElement('a');
-            link.download = `Surat_Lamaran_${appState.user.name.replace(/\s+/g, '_') || 'JobKit'}.png`;
-            link.href = dataUrl;
-            link.click();
-        } catch (err) {
-            console.error('Download failed:', err);
-            alert('Gagal mengambil gambar. Gunakan fitur PDF sebagai alternatif.');
-        }
-    }
 </script>
 
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -57,14 +36,9 @@
                 <label class="block text-sm font-semibold text-slate-700 mb-1">Alasan Melamar / Deskripsi Tambahan</label>
                 <textarea bind:value={appState.lamaran.reason} class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Saya tertarik melamar karena..."></textarea>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <button onclick={() => window.print()} class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
-                    <i class="fas fa-print"></i> Cetak PDF
-                </button>
-                <button onclick={downloadAsImage} class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
-                    <i class="fas fa-image"></i> Simpan Gambar
-                </button>
-            </div>
+            <button onclick={() => window.print()} class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-print"></i> Cetak Surat Lamaran
+            </button>
         </div>
     </div>
 

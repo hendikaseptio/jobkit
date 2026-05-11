@@ -19,6 +19,10 @@
 }
 
 @media print {
+    @page {
+        margin: 0;
+        size: auto;
+    }
     .no-print { display: none !important; }
     .print-only { display: block !important; }
     body { background: white !important; padding: 0 !important; margin: 0 !important; }

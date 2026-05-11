@@ -1,6 +1,5 @@
 <script lang="ts">
     import { appState } from '$lib/appState.svelte';
-    import { domToPng } from 'modern-screenshot';
 
     const keywords = {
         it: ['Javascript', 'React', 'Node.js', 'SQL', 'Git', 'Agile', 'Problem Solving', 'API', 'Docker', 'Cloud Computing'],
@@ -22,29 +21,6 @@
     }
 
     let skillsArray = $derived((appState.user.skills || '').split(',').map(s => s.trim()).filter(s => s !== ''));
-
-    async function downloadAsImage() {
-        const element = document.getElementById('cv-preview');
-        if (!element) return;
-        
-        try {
-            const dataUrl = await domToPng(element, {
-                scale: 2,
-                backgroundColor: '#ffffff',
-                features: {
-                    // Disable potentially problematic features if needed
-                }
-            });
-            
-            const link = document.createElement('a');
-            link.download = `CV_${appState.user.name.replace(/\s+/g, '_') || 'JobKit'}.png`;
-            link.href = dataUrl;
-            link.click();
-        } catch (err) {
-            console.error('Download failed:', err);
-            alert('Gagal mengambil gambar. Gunakan fitur PDF sebagai alternatif.');
-        }
-    }
 </script>
 
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -63,6 +39,10 @@
 
             <div class="space-y-6">
                 <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Pendidikan Terakhir</label>
+                    <input type="text" bind:value={appState.user.education} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" placeholder="Contoh: S1 Teknik Informatika" />
+                </div>
+                <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi Diri</label>
                     <textarea bind:value={appState.user.summary} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="4" placeholder="Ceritakan tentang dirimu..."></textarea>
                 </div>
@@ -74,14 +54,9 @@
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Keahlian (Pisahkan dengan koma)</label>
                     <textarea bind:value={appState.user.skills} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="3" placeholder="Contoh: Web Design, Photoshop..."></textarea>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <button onclick={() => window.print()} class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl font-bold shadow-lg shadow-green-100 transition-all flex items-center justify-center gap-2 text-sm">
-                        <i class="fas fa-file-pdf"></i> PDF
-                    </button>
-                    <button onclick={downloadAsImage} class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-2 text-sm">
-                        <i class="fas fa-image"></i> PNG Image
-                    </button>
-                </div>
+                <button onclick={() => window.print()} class="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-green-100 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </button>
             </div>
         </div>
 
