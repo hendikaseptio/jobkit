@@ -68,13 +68,25 @@
         const input = event.target as HTMLInputElement;
         const files = input.files;
         if (files && files.length > 0) {
-            Array.from(files).forEach(file => {
+            Array.from(files).forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = async (e) => {
                     const data = e.target?.result as string;
-                    const name = file.name;
+                    
+                    // Prioritaskan nama yang diketik user. 
+                    // Jika upload banyak file sekaligus, file pertama pakai nama input, sisanya pakai nama asli.
+                    let name = (index === 0 && newAttachment.trim()) ? newAttachment.trim() : file.name;
+                    
+                    // Cek duplikasi nama
+                    if (appState.lamaran.attachments.includes(name)) {
+                        name = `${name} (${new Date().getTime().toString().slice(-3)})`;
+                    }
+
                     appState.lamaran.attachments = [...appState.lamaran.attachments, name];
                     await appState.saveAttachment(name, data);
+                    
+                    // Reset input setelah file pertama diproses
+                    if (index === 0) newAttachment = '';
                 };
                 reader.readAsDataURL(file);
             });
@@ -303,10 +315,10 @@
         <div class="mt-10">
             {#each appState.lamaran.attachments as item}
                 {#if appState.attachmentData[item]}
-                    <div class="print:break-before-page pt-10 flex flex-col items-center">
+                    <div class="print-page-container flex flex-col items-center">
                         <p class="text-xs text-slate-400 mb-4 no-print text-center">--- Halaman Lampiran: {item} ---</p>
-                        <div class="max-w-full bg-white shadow-sm border border-slate-100 rounded-lg overflow-hidden">
-                            <img src={appState.attachmentData[item]} alt={item} class="max-w-full h-auto" />
+                        <div class="max-w-full bg-white print:shadow-none shadow-sm border border-slate-100 rounded-lg overflow-hidden">
+                            <img src={appState.attachmentData[item]} alt={item} class="w-full h-auto object-contain max-h-[26cm]" />
                         </div>
                     </div>
                 {/if}
@@ -317,10 +329,23 @@
 
 <style>
     @media print {
-        .print\:break-before-page {
+        .print-page-container {
             break-before: page;
-            margin-top: 0 !important;
-            padding-top: 0 !important;
+            display: block !important;
+            padding: 1.5cm 0 !important;
+        }
+        /* Memberikan margin buatan (padding) agar teks tidak mepet pinggir kertas */
+        #lamaran-preview {
+            padding: 1.5cm !important;
+            margin: 0 !important;
+            max-width: none !important;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100% !important;
+            max-height: 26cm !important;
+            object-fit: contain;
         }
     }
 </style>
