@@ -72,7 +72,21 @@
         </div>
     </div>
 
-    <footer class="no-print hidden md:block bg-white border-t border-slate-200 py-8 text-center text-slate-400 text-sm">
-        <p>&copy; 2026 JobKit Portal - Build with Svelte 5</p>
+    <footer class="no-print bg-white border-t border-slate-100 py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center gap-6 mb-6">
+                <a href="https://github.com/hendikaseptio" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-100">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.instagram.com/hendika_septio/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-pink-50 hover:text-pink-600 transition-all border border-slate-100">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.youtube.com/@hendikaseptio5135" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all border border-slate-100">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+            <p class="text-slate-500 font-medium mb-2">Developed by <span class="text-blue-600 font-bold">Hendika Septio</span></p>
+            <p class="text-slate-400 text-xs tracking-widest uppercase font-semibold">&copy; 2026 JobKit Portal - Svelte 5 Power</p>
+        </div>
     </footer>
 </div>
