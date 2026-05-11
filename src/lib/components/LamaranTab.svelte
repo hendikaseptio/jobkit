@@ -1,6 +1,8 @@
 <script lang="ts">
     import { appState } from '$lib/appState.svelte';
     import { onMount } from 'svelte';
+    import jsPDF from 'jspdf';
+    import html2canvas from 'html2canvas';
 
     onMount(() => {
         if (!appState.lamaran.date) {
@@ -170,6 +172,56 @@ ${appState.user.phone || 'Nomor HP'}`);
 
     function onMouseUp() {
         isDragging = false;
+    }
+
+    async function downloadPDF(withAttachments: boolean) {
+        // Find the letter element (using the print view version for best fidelity)
+        const element = document.querySelector('.print-only-letter') as HTMLElement;
+        if (!element) return;
+
+        // Add a temporary loading state or just proceed
+        const canvas = await html2canvas(element, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+        if (withAttachments) {
+            for (const item of appState.lamaran.attachments) {
+                const data = appState.attachmentData[item];
+                if (data) {
+                    pdf.addPage();
+                    // We try to fit the image to the page while maintaining aspect ratio
+                    const img = new Image();
+                    img.src = data;
+                    await new Promise(resolve => img.onload = resolve);
+                    
+                    const imgWidth = img.width;
+                    const imgHeight = img.height;
+                    const ratio = imgWidth / imgHeight;
+                    
+                    let finalW = pdfWidth;
+                    let finalH = pdfWidth / ratio;
+                    
+                    if (finalH > 297) {
+                        finalH = 297;
+                        finalW = 297 * ratio;
+                    }
+                    
+                    pdf.addImage(data, 'JPEG', (pdfWidth - finalW) / 2, (297 - finalH) / 2, finalW, finalH);
+                }
+            }
+        }
+
+        pdf.save(`Surat_Lamaran_${appState.user.name || 'JobKit'}.pdf`);
     }
 </script>
 
@@ -356,7 +408,6 @@ ${appState.user.phone || 'Nomor HP'}`);
                                         onkeydown={(e) => e.key === 'Enter' && saveEdit()}
                                         onblur={saveEdit}
                                         class="flex-1 px-2 py-1 text-sm border border-blue-300 rounded outline-none focus:ring-1 focus:ring-blue-500"
-                                        autofocus
                                     />
                                 </div>
                             {:else}
@@ -365,7 +416,7 @@ ${appState.user.phone || 'Nomor HP'}`);
 
                             <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all ml-4">
                                 {#if editingIndex !== i}
-                                    <button onclick={() => startEdit(i, item)} class="p-1 text-slate-400 hover:text-blue-600" title="Ganti Nama">
+                                    <button onclick={() => startEdit(i, item)} class="p-1 text-slate-400 hover:text-blue-600" title="Ganti Nama" aria-label="Ganti Nama">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 {/if}
@@ -377,6 +428,7 @@ ${appState.user.phone || 'Nomor HP'}`);
                                     onclick={() => moveAttachment(i, 'up')}
                                     disabled={i === 0}
                                     class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-30"
+                                    aria-label="Pindah ke atas"
                                 >
                                     <i class="fas fa-chevron-up"></i>
                                 </button>
@@ -384,10 +436,11 @@ ${appState.user.phone || 'Nomor HP'}`);
                                     onclick={() => moveAttachment(i, 'down')}
                                     disabled={i === appState.lamaran.attachments.length - 1}
                                     class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-30"
+                                    aria-label="Pindah ke bawah"
                                 >
                                     <i class="fas fa-chevron-down"></i>
                                 </button>
-                                <button onclick={() => removeAttachment(i)} class="p-1 text-slate-400 hover:text-red-600">
+                                <button onclick={() => removeAttachment(i)} class="p-1 text-slate-400 hover:text-red-600" aria-label="Hapus Lampiran">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -410,7 +463,7 @@ ${appState.user.phone || 'Nomor HP'}`);
                             <h3 class="font-bold text-slate-800 flex items-center gap-2">
                                 <i class="fas fa-file-circle-plus text-blue-600"></i> Tambah Lampiran
                             </h3>
-                            <button onclick={() => (showModal = false)} class="text-slate-400 hover:text-slate-600">
+                            <button onclick={() => (showModal = false)} class="text-slate-400 hover:text-slate-600" aria-label="Tutup">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
@@ -479,6 +532,21 @@ ${appState.user.phone || 'Nomor HP'}`);
                 </button>
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                <button 
+                    onclick={() => downloadPDF(true)} 
+                    class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-6 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm"
+                >
+                    <i class="fas fa-file-pdf"></i> Download PDF + Lampiran
+                </button>
+                <button 
+                    onclick={() => downloadPDF(false)} 
+                    class="w-full bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 px-6 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm"
+                >
+                    <i class="fas fa-download"></i> Download PDF Saja
+                </button>
+            </div>
+
             <!-- EMAIL BODY TEMPLATE -->
             <div class="mt-8 pt-8 border-t border-slate-200">
                 <div class="flex items-center justify-between mb-4">
@@ -504,13 +572,13 @@ ${appState.user.phone || 'Nomor HP'}`);
     <div class="no-print md:hidden relative bg-slate-100 rounded-[2rem] border-4 border-slate-200 overflow-hidden flex flex-col h-[600px] shadow-inner">
         <!-- Zoom Controls (Always Visible) -->
         <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4 bg-white/90 backdrop-blur shadow-2xl border border-slate-200 px-5 py-2.5 rounded-2xl transition-all">
-            <button onclick={() => (zoom = Math.max(0.4, zoom - 0.1))} class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg text-slate-600 transition-all">
+            <button onclick={() => (zoom = Math.max(0.4, zoom - 0.1))} class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg text-slate-600 transition-all" aria-label="Perkecil">
                 <i class="fas fa-minus text-xs"></i>
             </button>
             <div class="flex flex-col items-center min-w-[50px]">
                 <span class="text-[10px] font-black text-slate-800">{Math.round(zoom * 100)}%</span>
             </div>
-            <button onclick={() => (zoom = Math.min(1.5, zoom + 0.1))} class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg text-slate-600 transition-all">
+            <button onclick={() => (zoom = Math.min(1.5, zoom + 0.1))} class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg text-slate-600 transition-all" aria-label="Perbesar">
                 <i class="fas fa-plus text-xs"></i>
             </button>
             <div class="w-px h-4 bg-slate-200 mx-1"></div>
@@ -524,6 +592,8 @@ ${appState.user.phone || 'Nomor HP'}`);
             onmousemove={onMouseMove}
             onmouseup={onMouseUp}
             onmouseleave={onMouseUp}
+            role="region"
+            aria-label="Penampil Dokumen"
             class="flex-1 overflow-auto p-10 cursor-grab active:cursor-grabbing select-none scrollbar-hide bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:15px_15px]"
         >
             <div 
@@ -544,7 +614,7 @@ ${appState.user.phone || 'Nomor HP'}`);
 
     <!-- PRINT VIEW -->
     <div class="hidden print:block bg-white print:p-0 print:shadow-none">
-        <div id="lamaran-preview" class="w-[210mm] mx-auto text-slate-900 leading-relaxed">
+        <div id="lamaran-preview" class="print-only-letter w-[210mm] mx-auto text-slate-900 leading-relaxed">
             {@render letterContent()}
         </div>
     </div>

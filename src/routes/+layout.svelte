@@ -75,13 +75,13 @@
     <footer class="no-print bg-white border-t border-slate-100 pt-12 pb-32 md:pb-12 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <div class="flex justify-center gap-6 mb-6">
-                <a href="https://github.com/hendikaseptio" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-100">
+                <a href="https://github.com/hendikaseptio" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-100" aria-label="GitHub">
                     <i class="fab fa-github"></i>
                 </a>
-                <a href="https://www.instagram.com/hendika_septio/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-pink-50 hover:text-pink-600 transition-all border border-slate-100">
+                <a href="https://www.instagram.com/hendika_septio/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-pink-50 hover:text-pink-600 transition-all border border-slate-100" aria-label="Instagram">
                     <i class="fab fa-instagram"></i>
                 </a>
-                <a href="https://www.youtube.com/@hendikaseptio5135" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all border border-slate-100">
+                <a href="https://www.youtube.com/@hendikaseptio5135" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-red-50 hover:text-red-600 transition-all border border-slate-100" aria-label="YouTube">
                     <i class="fab fa-youtube"></i>
                 </a>
             </div>

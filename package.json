@@ -25,6 +25,8 @@
 	},
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.10",
-		"idb-keyval": "^6.2.2"
+		"html2canvas": "^1.4.1",
+		"idb-keyval": "^6.2.2",
+		"jspdf": "^4.2.1"
 	}
 }
