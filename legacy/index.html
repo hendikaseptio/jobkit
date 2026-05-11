@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobKit - Career Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .active-tab {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; }
+            .card { border: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- NAVIGATION -->
+    <nav class="sticky top-0 z-50 glass no-print border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 p-2 rounded-lg text-white">
+                        <i class="fas fa-briefcase text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">JobKit</span>
+                </div>
+                <div class="hidden md:flex gap-4">
+                    <button onclick="switchTab('profile')" id="btn-profile" class="px-4 py-2 rounded-xl font-medium transition-all hover:bg-blue-50 active-tab">
+                        <i class="fas fa-user-circle mr-2"></i>Profil
+                    </button>
+                    <button onclick="switchTab('cv')" id="btn-cv" class="px-4 py-2 rounded-xl font-medium transition-all hover:bg-blue-50">
+                        <i class="fas fa-file-invoice mr-2"></i>CV Generator
+                    </button>
+                    <button onclick="switchTab('lamaran')" id="btn-lamaran" class="px-4 py-2 rounded-xl font-medium transition-all hover:bg-blue-50">
+                        <i class="fas fa-envelope-open-text mr-2"></i>Surat Lamaran
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- SECTION: PROFIL -->
+        <section id="section-profile" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="relative group">
+                                <div id="photo-preview-container" class="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-md overflow-hidden">
+                                    <i id="photo-placeholder" class="fas fa-user text-4xl text-slate-400"></i>
+                                    <img id="photo-img" src="" class="hidden w-full h-full object-cover">
+                                </div>
+                                <label class="absolute bottom-4 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer shadow-lg hover:bg-blue-700 transition-all">
+                                    <i class="fas fa-camera"></i>
+                                    <input type="file" id="photo-input" class="hidden" accept="image/*" onchange="handlePhotoUpload(event)">
+                                </label>
+                            </div>
+                            <h2 id="display-name" class="text-xl font-bold">Nama Lengkap</h2>
+                            <p id="display-email" class="text-slate-500 text-sm">email@example.com</p>
+                            <button onclick="removePhoto()" class="text-xs text-red-500 mt-2 hover:underline">Hapus Foto</button>
+                        </div>
+                        <div class="mt-8 space-y-4">
+                            <div class="flex items-center gap-3 text-sm text-slate-600">
+                                <i class="fas fa-phone w-5 text-blue-600"></i>
+                                <span id="display-phone">08xxxxxxxxxx</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-slate-600">
+                                <i class="fas fa-location-dot w-5 text-blue-600"></i>
+                                <span id="display-address">Alamat belum diisi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                        <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                            <i class="fas fa-edit text-blue-600"></i> Edit Data Diri Utama
+                        </h3>
+                        <form id="profile-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap</label>
+                                    <input type="text" name="name" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Masukkan nama lengkap">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                                    <input type="email" name="email" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="nama@email.com">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nomor HP</label>
+                                    <input type="text" name="phone" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="08xxxxxx">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Pendidikan Terakhir</label>
+                                    <input type="text" name="education" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Contoh: S1 Teknik Informatika">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Alamat</label>
+                                <textarea name="address" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Alamat lengkap..."></textarea>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95">
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CV GENERATOR -->
+        <section id="section-cv" class="tab-content hidden">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <!-- Inputs -->
+                <div class="space-y-6 no-print">
+                    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                        <h3 class="text-xl font-bold mb-6 flex items-center justify-between">
+                            Sesuaikan CV Kamu
+                            <div class="flex gap-2">
+                                <select id="cv-template" onchange="changeTemplate()" class="text-sm border rounded-lg px-2 py-1 outline-none">
+                                    <option value="modern">Modern (Sidebar)</option>
+                                    <option value="ats">ATS (Hitam Putih)</option>
+                                    <option value="fresh">Fresh Graduate</option>
+                                    <option value="formal">Formal Corporate</option>
+                                </select>
+                            </div>
+                        </h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi Diri</label>
+                                <textarea id="cv-summary" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="4" placeholder="Ceritakan tentang dirimu..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Pengalaman Kerja</label>
+                                <textarea id="cv-experience" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="5" placeholder="Sebutkan riwayat pekerjaan..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Keahlian (Skills)</label>
+                                <textarea id="cv-skills" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="3" placeholder="Contoh: Web Design, Photoshop, Microsoft Office..."></textarea>
+                            </div>
+                            <div class="flex gap-4">
+                                <button onclick="window.print()" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-green-100 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-file-pdf"></i> Download PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ATS OPTIMIZER HELPER (Previously added) -->
+                    <div class="bg-blue-900 text-white p-8 rounded-3xl shadow-xl">
+                        <h4 class="font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-magic text-yellow-400"></i> ATS Optimizer Helper
+                        </h4>
+                        <p class="text-blue-100 text-sm mb-6">Pilih bidang pekerjaan untuk melihat saran kata kunci yang sering dicari sistem ATS:</p>
+                        
+                        <div class="space-y-4">
+                            <select id="keyword-role" onchange="updateKeywords()" class="w-full bg-blue-800 border-blue-700 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400">
+                                <option value="">-- Pilih Bidang --</option>
+                                <option value="it">Teknologi Informasi (IT)</option>
+                                <option value="admin">Administrasi / Office</option>
+                                <option value="marketing">Marketing & Sales</option>
+                            </select>
+                            
+                            <div id="keyword-container" class="flex flex-wrap gap-2 min-h-[40px]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Area -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden print:shadow-none print:border-none">
+                    <div id="cv-preview-container" class="tpl-modern">
+                        <article id="cv-preview" class="max-w-[21cm] mx-auto transition-all bg-white min-h-[29.7cm]">
+                            <!-- MODERN TEMPLATE STRUCTURE (DEFAULT) -->
+                            <div class="template-wrapper flex flex-col md:flex-row min-h-[29.7cm]">
+                                <!-- Sidebar -->
+                                <aside class="w-full md:w-72 bg-slate-900 text-white p-8 flex flex-col gap-8 sidebar-area">
+                                    <div class="flex flex-col items-center gap-4">
+                                        <div class="w-32 h-32 rounded-2xl overflow-hidden border-2 border-slate-700 photo-area hidden">
+                                            <img id="p-cv-photo" src="" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="text-center">
+                                            <h1 id="p-cv-name" class="text-xl font-bold uppercase tracking-tight">NAMA KAMU</h1>
+                                            <p id="p-cv-education-short" class="text-xs text-slate-400 mt-1 uppercase"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-6">
+                                        <section>
+                                            <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-3 border-b border-slate-800 pb-1">Kontak</h3>
+                                            <div class="space-y-3 text-xs text-slate-300">
+                                                <p id="p-cv-email" class="flex items-center gap-2"><i class="fas fa-envelope w-4"></i> email@example.com</p>
+                                                <p id="p-cv-phone" class="flex items-center gap-2"><i class="fas fa-phone w-4"></i> 08xxxxxxxx</p>
+                                                <p id="p-cv-address" class="flex items-center gap-2"><i class="fas fa-map-marker-alt w-4"></i> Alamat</p>
+                                            </div>
+                                        </section>
+
+                                        <section>
+                                            <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-3 border-b border-slate-800 pb-1">Keahlian</h3>
+                                            <div id="p-cv-skills" class="flex flex-wrap gap-2 text-[10px]">
+                                                <!-- Skills badges -->
+                                            </div>
+                                        </section>
+                                    </div>
+                                </aside>
+
+                                <!-- Main Content -->
+                                <main class="flex-1 p-10 flex flex-col gap-8 bg-white main-area">
+                                    <section>
+                                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
+                                            <span class="w-8 h-1 bg-blue-600 rounded"></span>
+                                            PROFIL PROFESIONAL
+                                        </h2>
+                                        <p id="p-cv-summary" class="text-sm text-slate-600 leading-relaxed text-justify whitespace-pre-wrap">Belum ada deskripsi.</p>
+                                    </section>
+
+                                    <section>
+                                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
+                                            <span class="w-8 h-1 bg-blue-600 rounded"></span>
+                                            PENGALAMAN KERJA
+                                        </h2>
+                                        <div id="p-cv-experience" class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap"></div>
+                                    </section>
+
+                                    <section>
+                                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
+                                            <span class="w-8 h-1 bg-blue-600 rounded"></span>
+                                            PENDIDIKAN
+                                        </h2>
+                                        <p id="p-cv-education" class="text-sm font-semibold text-slate-800"></p>
+                                    </section>
+                                </main>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEMPLATE CSS STYLES -->
+        <style>
+            /* Template: ATS (Simple Black & White) */
+            .tpl-ats article { font-family: 'Times New Roman', serif; color: black; line-height: 1.5; padding: 2cm !important; }
+            .tpl-ats .sidebar-area { background: transparent; color: black; width: 100%; border: none; padding: 0; }
+            .tpl-ats .template-wrapper { display: block; }
+            .tpl-ats .main-area { padding: 0; margin-top: 1cm; }
+            .tpl-ats h1 { font-size: 24pt; text-align: center; border-bottom: 2px solid black; padding-bottom: 5px; margin-bottom: 10px; color: black; }
+            .tpl-ats .photo-area { display: none !important; }
+            .tpl-ats h2 { font-size: 14pt; border-bottom: 1px solid black; margin-top: 15px; color: black; text-align: left; }
+            .tpl-ats h2 span { display: none; }
+            .tpl-ats h3 { display: none; }
+            .tpl-ats p, .tpl-ats div { font-size: 11pt; color: black !important; }
+            .tpl-ats .sidebar-area section { margin-bottom: 10px; }
+            .tpl-ats #p-cv-skills span { background: none; border: none; padding: 0; color: black !important; font-weight: bold; }
+            .tpl-ats #p-cv-skills span::after { content: ", "; }
+
+            /* Template: Fresh Graduate */
+            .tpl-fresh aside { background: #f1f5f9; color: #1e293b; border-right: 1px solid #e2e8f0; }
+            .tpl-fresh h3 { color: #2563eb; border-color: #cbd5e1; }
+            .tpl-fresh .photo-area { border-radius: 999px; }
+            .tpl-fresh main h2 { color: #2563eb; }
+
+            /* Template: Formal Corporate */
+            .tpl-formal header { background: #1e293b; color: white; padding: 40px; text-align: center; }
+            .tpl-formal .template-wrapper { display: block; }
+            .tpl-formal .sidebar-area { display: flex; flex-direction: row; flex-wrap: wrap; background: #f8fafc; padding: 20px 40px; border-bottom: 1px solid #e2e8f0; width: 100%; justify-content: center; }
+            .tpl-formal .sidebar-area section { margin-bottom: 0; margin-right: 20px; }
+            .tpl-formal .main-area { padding: 40px; }
+            .tpl-formal .photo-area { position: absolute; top: 20px; right: 40px; width: 100px; height: 100px; border-radius: 8px; }
+        </style>
+
+        <!-- SECTION: LAMARAN GENERATOR -->
+        <section id="section-lamaran" class="tab-content hidden">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 no-print">
+                    <h3 class="text-xl font-bold mb-6">Detail Lamaran</h3>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Tempat, Tanggal</label>
+                                <input type="text" id="lam-date" class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50" placeholder="Contoh: Jakarta, 20 Mei 2026">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Posisi Dilamar</label>
+                                <input type="text" id="lam-position" class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50" placeholder="Contoh: Software Engineer">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Perusahaan</label>
+                            <input type="text" id="lam-company" class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50" placeholder="PT. Maju Bersama">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Alamat Perusahaan</label>
+                            <textarea id="lam-company-addr" class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50" rows="2"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Alasan Melamar / Deskripsi</label>
+                            <textarea id="lam-reason" class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none bg-slate-50" rows="4" placeholder="Saya tertarik melamar karena..."></textarea>
+                        </div>
+                        <button onclick="window.print()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-print"></i> Cetak Surat Lamaran
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-12 rounded-xl shadow-lg border border-slate-100 print:p-0 print:shadow-none min-h-[800px]">
+                    <div id="lamaran-preview" class="max-w-[21cm] mx-auto text-slate-900 leading-relaxed">
+                        <div class="text-right mb-8">
+                            <p id="p-lam-date">Jakarta, 20 Mei 2026</p>
+                        </div>
+
+                        <div class="mb-8">
+                            <p>Kepada Yth.<br>
+                            HRD <span id="p-lam-company" class="font-bold">PT. Maju Bersama</span><br>
+                            <span id="p-lam-company-addr">Alamat Perusahaan</span></p>
+                        </div>
+
+                        <div class="mb-6">
+                            <p>Perihal: <span class="font-bold">Lamaran Pekerjaan - <span id="p-lam-position">Software Engineer</span></span></p>
+                        </div>
+
+                        <p class="mb-4">Dengan hormat,</p>
+
+                        <p class="mb-4">Saya yang bertanda tangan di bawah ini:</p>
+                        
+                        <div class="ml-8 mb-6 space-y-1">
+                            <div class="flex">
+                                <span class="w-32">Nama</span>
+                                <span class="mr-2">:</span>
+                                <span class="font-semibold" id="p-lam-name">-</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-32">Email</span>
+                                <span class="mr-2">:</span>
+                                <span id="p-lam-email" class="break-all">-</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-32">Telepon</span>
+                                <span class="mr-2">:</span>
+                                <span id="p-lam-phone">-</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-32">Pendidikan</span>
+                                <span class="mr-2">:</span>
+                                <span id="p-lam-edu">-</span>
+                            </div>
+                        </div>
+
+                        <p id="p-lam-body" class="mb-4 text-justify">
+                            Berdasarkan informasi yang saya dapatkan, saya bermaksud untuk melamar posisi <b id="p-lam-position2">Software Engineer</b> di <b id="p-lam-company2">PT. Maju Bersama</b>. 
+                            <span id="p-lam-reason-text">Saya memiliki latar belakang pendidikan dan pengalaman yang relevan untuk berkontribusi bagi perusahaan.</span>
+                        </p>
+
+                        <p class="mb-8">Besar harapan saya untuk dapat mendiskusikan kualifikasi saya lebih lanjut dalam sesi wawancara. Atas perhatian Bapak/Ibu, saya ucapkan terima kasih.</p>
+
+                        <div class="mt-12">
+                            <p>Hormat saya,</p>
+                            <div class="h-24"></div>
+                            <p class="font-bold underline" id="p-lam-name2">Nama Lengkap</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Core State
+        let userData = {
+            name: '',
+            email: '',
+            phone: '',
+            address: '',
+            education: '',
+            photo: null
+        };
+
+        // Initialize from LocalStorage
+        function init() {
+            const saved = localStorage.getItem('jobkit_profile');
+            if (saved) {
+                userData = JSON.parse(saved);
+                fillForm();
+                updateDisplays();
+            }
+            
+            // Set default date for lamaran
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('lam-date').value = `Jakarta, ${dateStr}`;
+            
+            // Add listeners for dynamic preview updates
+            setupLivePreviews();
+        }
+
+        // Photo Handling
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const base64 = e.target.result;
+                    userData.photo = base64;
+                    localStorage.setItem('jobkit_profile', JSON.stringify(userData));
+                    updateDisplays();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removePhoto() {
+            userData.photo = null;
+            localStorage.setItem('jobkit_profile', JSON.stringify(userData));
+            updateDisplays();
+        }
+
+        function changeTemplate() {
+            const tpl = document.getElementById('cv-template').value;
+            const container = document.getElementById('cv-preview-container');
+            container.className = `tpl-${tpl}`;
+        }
+
+        function fillForm() {
+            const form = document.getElementById('profile-form');
+            Object.keys(userData).forEach(key => {
+                if (form.elements[key]) {
+                    form.elements[key].value = userData[key];
+                }
+            });
+        }
+
+        function updateDisplays() {
+            // Sidebar/Header
+            document.getElementById('display-name').innerText = userData.name || 'Nama Lengkap';
+            document.getElementById('display-email').innerText = userData.email || 'email@example.com';
+            document.getElementById('display-phone').innerText = userData.phone || '08xxxxxxxxxx';
+            document.getElementById('display-address').innerText = userData.address || 'Alamat belum diisi';
+
+            // Profile Photo
+            const img = document.getElementById('photo-img');
+            const placeholder = document.getElementById('photo-placeholder');
+            const cvPhoto = document.getElementById('p-cv-photo');
+            const cvPhotoArea = document.querySelector('.photo-area');
+
+            if (userData.photo) {
+                img.src = userData.photo;
+                img.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                
+                if (cvPhoto) {
+                    cvPhoto.src = userData.photo;
+                    cvPhotoArea.classList.remove('hidden');
+                }
+            } else {
+                img.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+                if (cvPhotoArea) cvPhotoArea.classList.add('hidden');
+            }
+
+            // CV Preview
+            const nameEl = document.getElementById('p-cv-name');
+            if (nameEl) nameEl.innerText = (userData.name || 'NAMA LENGKAP').toUpperCase();
+            
+            const eduShort = document.getElementById('p-cv-education-short');
+            if (eduShort) eduShort.innerText = userData.education || '';
+
+            const emailEl = document.getElementById('p-cv-email');
+            if (emailEl) emailEl.innerHTML = `<i class="fas fa-envelope w-4"></i> ${userData.email || 'email@example.com'}`;
+            
+            const phoneEl = document.getElementById('p-cv-phone');
+            if (phoneEl) phoneEl.innerHTML = `<i class="fas fa-phone w-4"></i> ${userData.phone || '08xxxxxxxx'}`;
+            
+            const addrEl = document.getElementById('p-cv-address');
+            if (addrEl) addrEl.innerHTML = `<i class="fas fa-map-marker-alt w-4"></i> ${userData.address || 'Alamat'}`;
+            
+            const eduEl = document.getElementById('p-cv-education');
+            if (eduEl) eduEl.innerText = userData.education || 'Belum diisi';
+
+            // Lamaran Preview
+            document.getElementById('p-lam-name').innerText = userData.name || '-';
+            document.getElementById('p-lam-name2').innerText = userData.name || '-';
+            document.getElementById('p-lam-email').innerText = userData.email || '-';
+            document.getElementById('p-lam-phone').innerText = userData.phone || '-';
+            document.getElementById('p-lam-edu').innerText = userData.education || '-';
+        }
+
+        // Profile Form Submit
+        document.getElementById('profile-form').onsubmit = (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            userData = Object.fromEntries(formData.entries());
+            localStorage.setItem('jobkit_profile', JSON.stringify(userData));
+            updateDisplays();
+            alert('Profil berhasil diperbarui! ✨');
+        };
+
+        // Tab Switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(`section-${tab}`).classList.remove('hidden');
+            
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab'));
+            document.getElementById(`btn-${tab}`).classList.add('active-tab');
+        }
+
+        // Live Previews for CV & Lamaran fields
+        function setupLivePreviews() {
+            // CV Fields
+            const cvSummary = document.getElementById('cv-summary');
+            cvSummary.oninput = () => document.getElementById('p-cv-summary').innerText = cvSummary.value || 'Belum ada deskripsi.';
+            
+            const cvExp = document.getElementById('cv-experience');
+            cvExp.oninput = () => document.getElementById('p-cv-experience').innerText = cvExp.value || '';
+            
+            const cvSkills = document.getElementById('cv-skills');
+            cvSkills.oninput = () => {
+                const skillsArr = cvSkills.value.split(',').map(s => s.trim()).filter(s => s !== '');
+                const container = document.getElementById('p-cv-skills');
+                container.innerHTML = '';
+                skillsArr.forEach(s => {
+                    const span = document.createElement('span');
+                    span.className = 'bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold border border-blue-100';
+                    span.innerText = s;
+                    container.appendChild(span);
+                });
+            };
+
+            // Lamaran Fields
+            const lamDate = document.getElementById('lam-date');
+            lamDate.oninput = () => document.getElementById('p-lam-date').innerText = lamDate.value;
+
+            const lamComp = document.getElementById('lam-company');
+            lamComp.oninput = () => {
+                document.getElementById('p-lam-company').innerText = lamComp.value || 'Nama Perusahaan';
+                document.getElementById('p-lam-company2').innerText = lamComp.value || 'Nama Perusahaan';
+            };
+
+            const lamAddr = document.getElementById('lam-company-addr');
+            lamAddr.oninput = () => document.getElementById('p-lam-company-addr').innerText = lamAddr.value || 'Alamat Perusahaan';
+
+            const lamPos = document.getElementById('lam-position');
+            lamPos.oninput = () => {
+                document.getElementById('p-lam-position').innerText = lamPos.value || 'Posisi';
+                document.getElementById('p-lam-position2').innerText = lamPos.value || 'Posisi';
+            };
+
+            const lamReason = document.getElementById('lam-reason');
+            lamReason.oninput = () => document.getElementById('p-lam-reason-text').innerText = lamReason.value || 'Saya memiliki latar belakang pendidikan dan pengalaman yang relevan untuk berkontribusi bagi perusahaan.';
+        }
+
+        // ATS Helper Logic
+        const keywords = {
+            it: ['Javascript', 'React', 'Node.js', 'SQL', 'Git', 'Agile', 'Problem Solving', 'API', 'Docker', 'Cloud Computing'],
+            admin: ['Microsoft Office', 'Data Entry', 'Scheduling', 'Communication', 'Organization', 'Customer Service', 'Filing', 'Budgeting'],
+            marketing: ['SEO', 'Content Strategy', 'Social Media', 'Analytics', 'Copywriting', 'Public Relations', 'Email Marketing', 'Market Research']
+        };
+
+        function updateKeywords() {
+            const role = document.getElementById('keyword-role').value;
+            const container = document.getElementById('keyword-container');
+            container.innerHTML = '';
+            
+            if (role && keywords[role]) {
+                keywords[role].forEach(word => {
+                    const btn = document.createElement('button');
+                    btn.className = 'bg-blue-700 hover:bg-blue-600 text-xs px-2 py-1 rounded transition-colors flex items-center gap-1';
+                    btn.innerHTML = `${word} <i class="fas fa-plus text-[10px]"></i>`;
+                    btn.onclick = () => addKeywordToSkills(word);
+                    container.appendChild(btn);
+                });
+            }
+        }
+
+        function addKeywordToSkills(word) {
+            const input = document.getElementById('cv-skills');
+            const current = input.value.trim();
+            if (current) {
+                if (!current.toLowerCase().includes(word.toLowerCase())) {
+                    input.value = current + ', ' + word;
+                }
+            } else {
+                input.value = word;
+            }
+            // Trigger input event to update preview
+            input.dispatchEvent(new Event('input'));
+        }
+
+        function toggleATSFont() {
+            const isChecked = document.getElementById('ats-font-toggle').checked;
+            const preview = document.getElementById('cv-preview');
+            if (isChecked) {
+                preview.style.fontFamily = 'Arial, Helvetica, sans-serif';
+            } else {
+                preview.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

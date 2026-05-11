@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generator Surat Lamaran Kerja</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial,sans-serif;
+    }
+
+    body{
+      background:#f3f4f6;
+      padding:20px;
+      color:#222;
+    }
+
+    .container{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1,h2{
+      margin-bottom:15px;
+    }
+
+    label{
+      display:block;
+      margin-top:12px;
+      font-weight:bold;
+    }
+
+    input,textarea{
+      width:100%;
+      padding:10px;
+      margin-top:5px;
+      border:1px solid #ccc;
+      border-radius:8px;
+    }
+
+    textarea{
+      resize:vertical;
+      min-height:80px;
+    }
+
+    button{
+      padding:10px 15px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+      margin-top:15px;
+      margin-right:10px;
+    }
+
+    .save{
+      background:#2563eb;
+      color:white;
+    }
+
+    .print{
+      background:#16a34a;
+      color:white;
+    }
+
+    .clear{
+      background:#dc2626;
+      color:white;
+    }
+
+    .letter{
+      border:1px solid #ddd;
+      padding:30px;
+      border-radius:10px;
+      line-height:1.7;
+    }
+
+    .right{
+      text-align:right;
+    }
+
+    @media(max-width:900px){
+      .container{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media print{
+      .form-section,
+      .btn-group{
+        display:none;
+      }
+
+      body{
+        background:white;
+      }
+
+      .card{
+        box-shadow:none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- FORM -->
+    <div class="card form-section">
+      <h1>Generator Surat Lamaran</h1>
+
+      <label>Nama Lengkap</label>
+      <input type="text" id="name">
+
+      <label>Tempat, Tanggal</label>
+      <input type="text" id="datePlace" placeholder="Contoh: Semarang, 10 Mei 2026">
+
+      <label>Posisi Dilamar</label>
+      <input type="text" id="position">
+
+      <label>Nama Perusahaan</label>
+      <input type="text" id="company">
+
+      <label>Alamat Perusahaan</label>
+      <textarea id="companyAddress"></textarea>
+
+      <label>Email</label>
+      <input type="email" id="email">
+
+      <label>No HP</label>
+      <input type="text" id="phone">
+
+      <label>Pendidikan Terakhir</label>
+      <input type="text" id="education">
+
+      <label>Deskripsi Singkat</label>
+      <textarea id="description"></textarea>
+
+      <div class="btn-group">
+        <button class="save" onclick="saveData()">Simpan</button>
+        <button class="print" onclick="window.print()">Print PDF</button>
+        <button class="clear" onclick="clearData()">Hapus</button>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="card">
+      <h2>Preview Surat</h2>
+
+      <div class="letter">
+
+        <p class="right" id="p_datePlace">
+          Semarang, 10 Mei 2026
+        </p>
+
+        <br>
+
+        <p>
+          Kepada Yth.<br>
+          HRD <span id="p_company">Nama Perusahaan</span><br>
+          <span id="p_companyAddress">Alamat Perusahaan</span>
+        </p>
+
+        <br>
+
+        <p>
+          Dengan hormat,
+        </p>
+
+        <br>
+
+        <p id="bodyText">
+          Saya yang bertanda tangan di bawah ini:
+        </p>
+
+        <br>
+
+        <p>
+          Nama : <span id="p_name">Nama Lengkap</span><br>
+          Email : <span id="p_email">email@gmail.com</span><br>
+          No HP : <span id="p_phone">08xxxxxxxxxx</span><br>
+          Pendidikan : <span id="p_education">SMK/SMA</span>
+        </p>
+
+        <br>
+
+        <p id="p_description">
+          Dengan ini saya mengajukan lamaran pekerjaan untuk posisi yang tersedia di perusahaan Bapak/Ibu.
+        </p>
+
+        <br>
+
+        <p>
+          Saya bermaksud melamar pekerjaan sebagai
+          <b id="p_position">Staff</b>
+          di
+          <b id="p_company2">Nama Perusahaan</b>.
+        </p>
+
+        <br>
+
+        <p>
+          Besar harapan saya untuk dapat diberikan kesempatan wawancara agar dapat menjelaskan lebih lanjut mengenai kemampuan saya.
+        </p>
+
+        <br>
+
+        <p>
+          Atas perhatian Bapak/Ibu saya ucapkan terima kasih.
+        </p>
+
+        <br><br>
+
+        <p>
+          Hormat saya,
+        </p>
+
+        <br><br><br>
+
+        <p id="p_name2">
+          Nama Lengkap
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const fields = [
+      "name",
+      "datePlace",
+      "position",
+      "company",
+      "companyAddress",
+      "email",
+      "phone",
+      "education",
+      "description"
+    ];
+
+    function updatePreview(){
+
+      document.getElementById("p_name").innerText =
+        document.getElementById("name").value || "Nama Lengkap";
+
+      document.getElementById("p_name2").innerText =
+        document.getElementById("name").value || "Nama Lengkap";
+
+      document.getElementById("p_datePlace").innerText =
+        document.getElementById("datePlace").value || "Semarang, 10 Mei 2026";
+
+      document.getElementById("p_company").innerText =
+        document.getElementById("company").value || "Nama Perusahaan";
+
+      document.getElementById("p_company2").innerText =
+        document.getElementById("company").value || "Nama Perusahaan";
+
+      document.getElementById("p_companyAddress").innerText =
+        document.getElementById("companyAddress").value || "Alamat Perusahaan";
+
+      document.getElementById("p_email").innerText =
+        document.getElementById("email").value || "email@gmail.com";
+
+      document.getElementById("p_phone").innerText =
+        document.getElementById("phone").value || "08xxxxxxxxxx";
+
+      document.getElementById("p_education").innerText =
+        document.getElementById("education").value || "SMK/SMA";
+
+      document.getElementById("p_position").innerText =
+        document.getElementById("position").value || "Staff";
+
+      document.getElementById("p_description").innerText =
+        document.getElementById("description").value ||
+        "Dengan ini saya mengajukan lamaran pekerjaan untuk posisi yang tersedia di perusahaan Bapak/Ibu.";
+    }
+
+    function saveData(){
+      const data = {};
+
+      fields.forEach(field => {
+        data[field] = document.getElementById(field).value;
+      });
+
+      localStorage.setItem("suratLamaranData", JSON.stringify(data));
+
+      alert("Data berhasil disimpan");
+    }
+
+    function loadData(){
+      const data = JSON.parse(
+        localStorage.getItem("suratLamaranData")
+      );
+
+      if(data){
+        fields.forEach(field => {
+          document.getElementById(field).value =
+            data[field] || "";
+        });
+
+        updatePreview();
+      }
+    }
+
+    function clearData(){
+      localStorage.removeItem("suratLamaranData");
+
+      fields.forEach(field => {
+        document.getElementById(field).value = "";
+      });
+
+      updatePreview();
+    }
+
+    fields.forEach(field => {
+      document
+        .getElementById(field)
+        .addEventListener("input", updatePreview);
+    });
+
+    loadData();
+    updatePreview();
+  </script>
+
+</body>
+</html>
