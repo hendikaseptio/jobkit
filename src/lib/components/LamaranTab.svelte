@@ -500,58 +500,55 @@ ${appState.user.phone || 'Nomor HP'}`);
         </div>
     </div>
 
-    <div class="no-print relative bg-slate-100 rounded-[2rem] border-4 border-slate-200 overflow-hidden flex flex-col h-[450px] shadow-inner group">
-        <!-- Zoom Controls -->
-        <div
-            class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4 bg-white/90 backdrop-blur shadow-2xl border border-slate-200 px-6 py-3 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300"
-        >
-            <button
-                onclick={() => (zoom = Math.max(0.4, zoom - 0.1))}
-                class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-xl text-slate-600 transition-all"
-            >
-                <i class="fas fa-minus"></i>
+    <!-- MOBILE VIEWER -->
+    <div class="no-print md:hidden relative bg-slate-100 rounded-[2rem] border-4 border-slate-200 overflow-hidden flex flex-col h-[600px] shadow-inner">
+        <!-- Zoom Controls (Always Visible) -->
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4 bg-white/90 backdrop-blur shadow-2xl border border-slate-200 px-5 py-2.5 rounded-2xl transition-all">
+            <button onclick={() => (zoom = Math.max(0.4, zoom - 0.1))} class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg text-slate-600 transition-all">
+                <i class="fas fa-minus text-xs"></i>
             </button>
-            <div class="flex flex-col items-center min-w-[60px]">
-                <span class="text-xs font-black text-slate-800">{Math.round(zoom * 100)}%</span>
-                <span class="text-[8px] uppercase font-bold text-slate-400">Zoom</span>
+            <div class="flex flex-col items-center min-w-[50px]">
+                <span class="text-[10px] font-black text-slate-800">{Math.round(zoom * 100)}%</span>
             </div>
-            <button
-                onclick={() => (zoom = Math.min(1.5, zoom + 0.1))}
-                class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-xl text-slate-600 transition-all"
-            >
-                <i class="fas fa-plus"></i>
+            <button onclick={() => (zoom = Math.min(1.5, zoom + 0.1))} class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg text-slate-600 transition-all">
+                <i class="fas fa-plus text-xs"></i>
             </button>
-            <div class="w-px h-6 bg-slate-200 mx-2"></div>
-            <button
-                onclick={() => (zoom = 0.7)}
-                class="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 transition-all">Reset</button
-            >
+            <div class="w-px h-4 bg-slate-200 mx-1"></div>
+            <button onclick={() => (zoom = 0.5)} class="text-[9px] font-black uppercase tracking-widest text-blue-600">Reset</button>
         </div>
 
         <!-- Scroll/Pan Area -->
-        <div
+        <div 
             bind:this={viewerElement}
             onmousedown={onMouseDown}
             onmousemove={onMouseMove}
             onmouseup={onMouseUp}
             onmouseleave={onMouseUp}
-            class="flex-1 overflow-auto p-20 cursor-grab active:cursor-grabbing select-none scrollbar-hide bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px]"
+            class="flex-1 overflow-auto p-10 cursor-grab active:cursor-grabbing select-none scrollbar-hide bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:15px_15px]"
         >
-            <div
+            <div 
                 style="transform: scale({zoom}); transform-origin: top center; width: 210mm; min-height: 297mm;"
-                class="bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] mx-auto p-[2cm] text-slate-900 leading-relaxed transition-transform duration-200"
+                class="bg-white shadow-[0_10px_30px_rgba(0,0,0,0.1)] mx-auto p-[1.5cm] text-slate-900 leading-relaxed transition-transform duration-200"
             >
                 {@render letterContent()}
             </div>
         </div>
     </div>
 
-    <!-- PRINT VIEW (Visible only during printing) -->
+    <!-- DESKTOP PREVIEW -->
+    <div class="no-print hidden md:block bg-white p-12 rounded-3xl shadow-sm border border-slate-200">
+        <div class="max-w-[21cm] mx-auto text-slate-900 leading-relaxed">
+            {@render letterContent()}
+        </div>
+    </div>
+
+    <!-- PRINT VIEW -->
     <div class="hidden print:block bg-white print:p-0 print:shadow-none">
         <div id="lamaran-preview" class="w-[210mm] mx-auto text-slate-900 leading-relaxed">
             {@render letterContent()}
         </div>
     </div>
+
 
     <!-- VISUAL ATTACHMENTS (New Pages) -->
     <div class="mt-10 {!printWithAttachments ? 'no-print' : ''}">
