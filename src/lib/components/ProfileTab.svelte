@@ -62,25 +62,25 @@
             <form class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap</label>
-                        <input type="text" bind:value={appState.user.name} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Masukkan nama lengkap" />
+                        <label for="prof-name" class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap</label>
+                        <input id="prof-name" type="text" bind:value={appState.user.name} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Masukkan nama lengkap" />
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
-                        <input type="email" bind:value={appState.user.email} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="nama@email.com" />
+                        <label for="prof-email" class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                        <input id="prof-email" type="email" bind:value={appState.user.email} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="nama@email.com" />
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Nomor HP</label>
-                        <input type="text" bind:value={appState.user.phone} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="08xxxxxx" />
+                        <label for="prof-phone" class="block text-sm font-semibold text-slate-700 mb-2">Nomor HP</label>
+                        <input id="prof-phone" type="text" bind:value={appState.user.phone} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="08xxxxxx" />
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Pendidikan Terakhir</label>
-                        <input type="text" bind:value={appState.user.education} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Contoh: S1 Teknik Informatika" />
+                        <label for="prof-edu" class="block text-sm font-semibold text-slate-700 mb-2">Pendidikan Terakhir</label>
+                        <input id="prof-edu" type="text" bind:value={appState.user.education} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Contoh: S1 Teknik Informatika" />
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Alamat</label>
-                    <textarea bind:value={appState.user.address} rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Alamat lengkap..."></textarea>
+                    <label for="prof-addr" class="block text-sm font-semibold text-slate-700 mb-2">Alamat</label>
+                    <textarea id="prof-addr" bind:value={appState.user.address} rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Alamat lengkap..."></textarea>
                 </div>
                 <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex gap-3 items-start">
                     <i class="fas fa-info-circle text-blue-500 mt-1"></i>

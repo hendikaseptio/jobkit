@@ -16,25 +16,25 @@
         <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Tempat, Tanggal</label>
-                    <input type="text" bind:value={appState.lamaran.date} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" />
+                    <label for="lamaran-date" class="block text-sm font-semibold text-slate-700 mb-1">Tempat, Tanggal</label>
+                    <input id="lamaran-date" type="text" bind:value={appState.lamaran.date} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" />
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Posisi Dilamar</label>
-                    <input type="text" bind:value={appState.lamaran.position} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Software Engineer" />
+                    <label for="lamaran-pos" class="block text-sm font-semibold text-slate-700 mb-1">Posisi Dilamar</label>
+                    <input id="lamaran-pos" type="text" bind:value={appState.lamaran.position} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Software Engineer" />
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Perusahaan</label>
-                <input type="text" bind:value={appState.lamaran.company} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="PT. Maju Bersama" />
+                <label for="lamaran-company" class="block text-sm font-semibold text-slate-700 mb-1">Nama Perusahaan</label>
+                <input id="lamaran-company" type="text" bind:value={appState.lamaran.company} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="PT. Maju Bersama" />
             </div>
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Alamat Perusahaan</label>
-                <textarea bind:value={appState.lamaran.companyAddress} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" rows="2"></textarea>
+                <label for="lamaran-addr" class="block text-sm font-semibold text-slate-700 mb-1">Alamat Perusahaan</label>
+                <textarea id="lamaran-addr" bind:value={appState.lamaran.companyAddress} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" rows="2"></textarea>
             </div>
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Alasan Melamar / Deskripsi Tambahan</label>
-                <textarea bind:value={appState.lamaran.reason} class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Saya tertarik melamar karena..."></textarea>
+                <label for="lamaran-reason" class="block text-sm font-semibold text-slate-700 mb-1">Alasan Melamar / Deskripsi Tambahan</label>
+                <textarea id="lamaran-reason" bind:value={appState.lamaran.reason} class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Saya tertarik melamar karena..."></textarea>
             </div>
             <button onclick={() => window.print()} class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
                 <i class="fas fa-print"></i> Cetak Surat Lamaran

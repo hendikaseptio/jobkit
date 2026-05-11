@@ -39,20 +39,20 @@
 
             <div class="space-y-6">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Pendidikan Terakhir</label>
-                    <input type="text" bind:value={appState.user.education} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" placeholder="Contoh: S1 Teknik Informatika" />
+                    <label for="cv-edu" class="block text-sm font-semibold text-slate-700 mb-2">Pendidikan Terakhir</label>
+                    <input id="cv-edu" type="text" bind:value={appState.user.education} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" placeholder="Contoh: S1 Teknik Informatika" />
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi Diri</label>
-                    <textarea bind:value={appState.user.summary} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="4" placeholder="Ceritakan tentang dirimu..."></textarea>
+                    <label for="cv-summary" class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi Diri</label>
+                    <textarea id="cv-summary" bind:value={appState.user.summary} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="4" placeholder="Ceritakan tentang dirimu..."></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Pengalaman Kerja</label>
-                    <textarea bind:value={appState.user.experience} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="5" placeholder="Sebutkan riwayat pekerjaan..."></textarea>
+                    <label for="cv-exp" class="block text-sm font-semibold text-slate-700 mb-2">Pengalaman Kerja</label>
+                    <textarea id="cv-exp" bind:value={appState.user.experience} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="5" placeholder="Sebutkan riwayat pekerjaan..."></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Keahlian (Pisahkan dengan koma)</label>
-                    <textarea bind:value={appState.user.skills} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="3" placeholder="Contoh: Web Design, Photoshop..."></textarea>
+                    <label for="cv-skills" class="block text-sm font-semibold text-slate-700 mb-2">Keahlian (Pisahkan dengan koma)</label>
+                    <textarea id="cv-skills" bind:value={appState.user.skills} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" rows="3" placeholder="Contoh: Web Design, Photoshop..."></textarea>
                 </div>
                 <button onclick={() => window.print()} class="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-green-100 transition-all flex items-center justify-center gap-2">
                     <i class="fas fa-file-pdf"></i> Download PDF
