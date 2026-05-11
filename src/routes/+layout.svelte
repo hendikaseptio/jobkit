@@ -39,11 +39,40 @@
         </div>
     </nav>
 
-    <main class="flex-1">
+    <main class="flex-1 pb-20 md:pb-0">
         {@render children()}
     </main>
 
-    <footer class="no-print bg-white border-t border-slate-200 py-8 text-center text-slate-400 text-sm">
+    <!-- MOBILE DOCK MENU -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 glass md:hidden no-print border-t border-slate-200 px-4 py-2">
+        <div class="flex justify-around items-center h-16">
+            <button 
+                onclick={() => appState.activeTab = 'profile'} 
+                class="flex flex-col items-center gap-1 transition-all {appState.activeTab === 'profile' ? 'text-blue-600' : 'text-slate-400'}"
+            >
+                <i class="fas fa-user-circle text-xl"></i>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Profil</span>
+            </button>
+            
+            <button 
+                onclick={() => appState.activeTab = 'cv'} 
+                class="flex flex-col items-center gap-1 transition-all {appState.activeTab === 'cv' ? 'text-blue-600' : 'text-slate-400'}"
+            >
+                <i class="fas fa-file-invoice text-xl"></i>
+                <span class="text-[10px] font-bold uppercase tracking-wider">CV</span>
+            </button>
+
+            <button 
+                onclick={() => appState.activeTab = 'lamaran'} 
+                class="flex flex-col items-center gap-1 transition-all {appState.activeTab === 'lamaran' ? 'text-blue-600' : 'text-slate-400'}"
+            >
+                <i class="fas fa-envelope-open-text text-xl"></i>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Lamaran</span>
+            </button>
+        </div>
+    </div>
+
+    <footer class="no-print hidden md:block bg-white border-t border-slate-200 py-8 text-center text-slate-400 text-sm">
         <p>&copy; 2026 JobKit Portal - Build with Svelte 5</p>
     </footer>
 </div>

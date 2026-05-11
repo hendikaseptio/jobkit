@@ -1,7 +1,7 @@
 <script lang="ts">
     import { appState } from '$lib/appState.svelte';
     import { onMount } from 'svelte';
-    import html2canvas from 'html2canvas';
+    import { domToPng } from 'modern-screenshot';
 
     onMount(() => {
         if (!appState.lamaran.date) {
@@ -14,17 +14,20 @@
         const element = document.getElementById('lamaran-preview');
         if (!element) return;
         
-        const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: '#ffffff'
-        });
-        
-        const link = document.createElement('a');
-        link.download = `Surat_Lamaran_${appState.user.name.replace(/\s+/g, '_') || 'JobKit'}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        try {
+            const dataUrl = await domToPng(element, {
+                scale: 2,
+                backgroundColor: '#ffffff'
+            });
+            
+            const link = document.createElement('a');
+            link.download = `Surat_Lamaran_${appState.user.name.replace(/\s+/g, '_') || 'JobKit'}.png`;
+            link.href = dataUrl;
+            link.click();
+        } catch (err) {
+            console.error('Download failed:', err);
+            alert('Gagal mengambil gambar. Gunakan fitur PDF sebagai alternatif.');
+        }
     }
 </script>
 

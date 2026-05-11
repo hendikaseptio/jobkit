@@ -1,6 +1,6 @@
 <script lang="ts">
     import { appState } from '$lib/appState.svelte';
-    import html2canvas from 'html2canvas';
+    import { domToPng } from 'modern-screenshot';
 
     const keywords = {
         it: ['Javascript', 'React', 'Node.js', 'SQL', 'Git', 'Agile', 'Problem Solving', 'API', 'Docker', 'Cloud Computing'],
@@ -27,17 +27,23 @@
         const element = document.getElementById('cv-preview');
         if (!element) return;
         
-        const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: '#ffffff'
-        });
-        
-        const link = document.createElement('a');
-        link.download = `CV_${appState.user.name.replace(/\s+/g, '_') || 'JobKit'}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        try {
+            const dataUrl = await domToPng(element, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                features: {
+                    // Disable potentially problematic features if needed
+                }
+            });
+            
+            const link = document.createElement('a');
+            link.download = `CV_${appState.user.name.replace(/\s+/g, '_') || 'JobKit'}.png`;
+            link.href = dataUrl;
+            link.click();
+        } catch (err) {
+            console.error('Download failed:', err);
+            alert('Gagal mengambil gambar. Gunakan fitur PDF sebagai alternatif.');
+        }
     }
 </script>
 
