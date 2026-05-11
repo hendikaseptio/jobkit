@@ -7,6 +7,7 @@ export interface UserData {
     phone: string;
     address: string;
     education: string;
+    birthPlaceAndDate: string;
     photo: string | null;
     summary: string;
     experience: string;
@@ -18,7 +19,7 @@ export interface LamaranData {
     position: string;
     company: string;
     companyAddress: string;
-    reason: string;
+    source: string;
     attachments: string[];
 }
 
@@ -28,6 +29,7 @@ const DEFAULT_USER_DATA: UserData = {
     phone: '',
     address: '',
     education: '',
+    birthPlaceAndDate: '',
     photo: null,
     summary: '',
     experience: '',
@@ -39,7 +41,7 @@ const DEFAULT_LAMARAN_DATA: LamaranData = {
     position: '',
     company: '',
     companyAddress: '',
-    reason: '',
+    source: '',
     attachments: ['Curriculum Vitae (CV)', 'Ijazah Terakhir', 'Transkrip Nilai']
 };
 

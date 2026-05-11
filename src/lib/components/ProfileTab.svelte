@@ -66,6 +66,10 @@
                         <input id="prof-name" type="text" bind:value={appState.user.name} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Masukkan nama lengkap" />
                     </div>
                     <div>
+                        <label for="prof-birth" class="block text-sm font-semibold text-slate-700 mb-2">Tempat, Tanggal Lahir</label>
+                        <input id="prof-birth" type="text" bind:value={appState.user.birthPlaceAndDate} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="Contoh: Pemalang, 09 Mei 2003" />
+                    </div>
+                    <div>
                         <label for="prof-email" class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
                         <input id="prof-email" type="email" bind:value={appState.user.email} class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-slate-50" placeholder="nama@email.com" />
                     </div>

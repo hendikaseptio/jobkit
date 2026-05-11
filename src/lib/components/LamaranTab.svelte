@@ -94,6 +94,56 @@
             showModal = false;
         }
     }
+    function handleReupload(index: number, event: Event) {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const data = e.target?.result as string;
+                const name = appState.lamaran.attachments[index];
+                await appState.saveAttachment(name, data);
+            };
+            reader.readAsDataURL(file);
+        }
+        input.value = '';
+    }
+
+    let copyText = $state('Copy');
+    let emailBodyContent = $derived(`Yth. HRD ${appState.lamaran.company || 'Bapak/Ibu Personalia'},
+
+Perkenalkan saya ${appState.user.name || 'Nama Anda'}. Sesuai dengan informasi lowongan pekerjaan yang saya dapatkan dari ${appState.lamaran.source || 'informasi yang tersedia'}, melalui email ini saya bermaksud melamar pekerjaan ${appState.lamaran.position ? `untuk posisi ${appState.lamaran.position} ` : ''}di ${appState.lamaran.company || 'perusahaan yang Bapak/Ibu pimpin'}.
+
+Berikut adalah data singkat saya:
+Nama: ${appState.user.name || '-'}
+Tempat, Tanggal Lahir: ${appState.user.birthPlaceAndDate || '-'}
+Pendidikan: ${appState.user.education || '-'}
+Telepon: ${appState.user.phone || '-'}
+
+Sebagai bahan pertimbangan, saya telah melampirkan berkas-berkas pendukung pada email ini.
+Besar harapan saya untuk dapat berdiskusi lebih lanjut mengenai kesempatan ini.
+
+Terima kasih atas waktu dan perhatian Bapak/Ibu.
+
+Hormat saya,
+${appState.user.name || 'Nama Anda'}
+${appState.user.phone || 'Nomor HP'}`);
+
+    function copyEmailBody() {
+        navigator.clipboard.writeText(emailBodyContent);
+        copyText = 'Tersalin!';
+        setTimeout(() => copyText = 'Copy', 2000);
+    }
+
+    let printWithAttachments = $state(true);
+
+    function handlePrint(withAttachments: boolean) {
+        printWithAttachments = withAttachments;
+        setTimeout(() => {
+            window.print();
+            printWithAttachments = true;
+        }, 100);
+    }
 </script>
 
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -107,20 +157,22 @@
                 </div>
                 <div>
                     <label for="lamaran-pos" class="block text-sm font-semibold text-slate-700 mb-1">Posisi Dilamar</label>
-                    <input id="lamaran-pos" type="text" bind:value={appState.lamaran.position} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Software Engineer" />
+                    <input id="lamaran-pos" type="text" bind:value={appState.lamaran.position} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Staff Admin" />
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="lamaran-company" class="block text-sm font-semibold text-slate-700 mb-1">Nama Perusahaan</label>
+                    <input id="lamaran-company" type="text" bind:value={appState.lamaran.company} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="PT. Maju Mundur" />
+                </div>
+                <div>
+                    <label for="lamaran-source" class="block text-sm font-semibold text-slate-700 mb-1">Sumber Informasi Lowongan</label>
+                    <input id="lamaran-source" type="text" bind:value={appState.lamaran.source} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Instagram / LinkedIn / Teman" />
                 </div>
             </div>
             <div>
-                <label for="lamaran-company" class="block text-sm font-semibold text-slate-700 mb-1">Nama Perusahaan</label>
-                <input id="lamaran-company" type="text" bind:value={appState.lamaran.company} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" placeholder="PT. Maju Bersama" />
-            </div>
-            <div>
                 <label for="lamaran-addr" class="block text-sm font-semibold text-slate-700 mb-1">Alamat Perusahaan</label>
-                <textarea id="lamaran-addr" bind:value={appState.lamaran.companyAddress} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" rows="2"></textarea>
-            </div>
-            <div>
-                <label for="lamaran-reason" class="block text-sm font-semibold text-slate-700 mb-1">Alasan Melamar / Deskripsi Tambahan</label>
-                <textarea id="lamaran-reason" bind:value={appState.lamaran.reason} class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Saya tertarik melamar karena..."></textarea>
+                <textarea id="lamaran-addr" bind:value={appState.lamaran.companyAddress} class="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500" rows="2" placeholder="Alamat lengkap perusahaan..."></textarea>
             </div>
 
             <!-- ATTACHMENTS MANAGEMENT -->
@@ -160,10 +212,14 @@
                             
                             <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all ml-4">
                                 {#if editingIndex !== i}
-                                    <button onclick={() => startEdit(i, item)} class="p-1 text-slate-400 hover:text-blue-600" title="Rename">
+                                    <button onclick={() => startEdit(i, item)} class="p-1 text-slate-400 hover:text-blue-600" title="Ganti Nama">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 {/if}
+                                <label class="p-1 text-slate-400 hover:text-blue-600 cursor-pointer" title="Upload Ulang File">
+                                    <i class="fas fa-file-arrow-up"></i>
+                                    <input type="file" class="hidden" onchange={(e) => handleReupload(i, e)} />
+                                </label>
                                 <button onclick={() => moveAttachment(i, 'up')} disabled={i === 0} class="p-1 text-slate-400 hover:text-blue-600 disabled:opacity-30">
                                     <i class="fas fa-chevron-up"></i>
                                 </button>
@@ -237,71 +293,121 @@
                 </div>
             {/if}
 
-            <button onclick={() => window.print()} class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
-                <i class="fas fa-print"></i> Cetak Surat Lamaran
-            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button 
+                    onclick={() => handlePrint(true)} 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                    <i class="fas fa-print"></i> Cetak + Lampiran
+                </button>
+                <button 
+                    onclick={() => handlePrint(false)} 
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                >
+                    <i class="fas fa-file-lines"></i> Surat Saja
+                </button>
+            </div>
+
+            <!-- EMAIL BODY TEMPLATE -->
+            <div class="mt-8 pt-8 border-t border-slate-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fas fa-envelope text-blue-600"></i> Template Body Email
+                    </h4>
+                    <button 
+                        onclick={copyEmailBody}
+                        class="text-xs bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-all flex items-center gap-1.5 font-semibold"
+                    >
+                        <i class="fas fa-copy"></i> {copyText}
+                    </button>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm text-slate-700 whitespace-pre-wrap font-mono relative group">
+                    {emailBodyContent}
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="bg-white p-12 rounded-xl shadow-lg border border-slate-100 print:p-0 print:shadow-none min-h-[29.7cm]">
+    <div class="bg-white p-12 rounded-xl shadow-lg border border-slate-100 print:p-0 print:shadow-none min-h-[29.7cm] print:min-h-0">
         <div id="lamaran-preview" class="max-w-[21cm] mx-auto text-slate-900 leading-relaxed">
             <div class="text-right mb-8">
                 <p>{appState.lamaran.date || 'Jakarta, 10 Mei 2026'}</p>
             </div>
 
             <div class="mb-8">
-                <p>Kepada Yth.<br>
-                HRD <span class="font-bold">{appState.lamaran.company || 'Nama Perusahaan'}</span><br>
-                <span>{appState.lamaran.companyAddress || 'Alamat Perusahaan'}</span></p>
+                <p>Kepada Yth,<br>
+                {#if appState.lamaran.company}
+                    HRD {appState.lamaran.company}<br>
+                    {#if appState.lamaran.companyAddress}
+                        <span class="whitespace-pre-line">{appState.lamaran.companyAddress}</span>
+                    {:else}
+                        Di Tempat.
+                    {/if}
+                {:else}
+                    HRD Bapak / Ibu Personalia<br>
+                    Di Tempat.
+                {/if}
+                </p>
             </div>
 
-            <div class="mb-6">
-                <p>Perihal: <span class="font-bold">Lamaran Pekerjaan - <span>{appState.lamaran.position || 'Posisi'}</span></span></p>
-            </div>
+            <p class="mb-4">Dengan Hormat,</p>
 
-            <p class="mb-4">Dengan hormat,</p>
-
-            <p class="mb-4">Saya yang bertanda tangan di bawah ini:</p>
+            <p class="mb-4">Saya yang bertanda tangan dibawah ini :</p>
             
             <div class="ml-8 mb-6 space-y-1">
                 <div class="flex">
-                    <span class="w-32">Nama</span>
-                    <span class="mr-2">:</span>
-                    <span class="font-semibold">{appState.user.name || '-'}</span>
+                    <span class="w-48 flex-shrink-0">Nama</span>
+                    <span class="mr-2 flex-shrink-0">:</span>
+                    <span class="font-semibold">{appState.user.name || 'Hanum Salsa Nabilah'}</span>
                 </div>
                 <div class="flex">
-                    <span class="w-32">Email</span>
-                    <span class="mr-2">:</span>
-                    <span class="break-all">{appState.user.email || '-'}</span>
+                    <span class="w-48 flex-shrink-0">Tempat, Tanggal Lahir</span>
+                    <span class="mr-2 flex-shrink-0">:</span>
+                    <span>{appState.user.birthPlaceAndDate || 'Pemalang, 09 Mei 2003'}</span>
                 </div>
                 <div class="flex">
-                    <span class="w-32">Telepon</span>
-                    <span class="mr-2">:</span>
-                    <span>{appState.user.phone || '-'}</span>
+                    <span class="w-48 flex-shrink-0">Alamat</span>
+                    <span class="mr-2 flex-shrink-0">:</span>
+                    <span class="whitespace-pre-line">{appState.user.address || 'Dsn Kauman, Ds. Kauman\nRT. 02/ RW. 01, Kec. Comal\nKab. Pemalang'}</span>
                 </div>
                 <div class="flex">
-                    <span class="w-32">Pendidikan</span>
-                    <span class="mr-2">:</span>
-                    <span>{appState.user.education || '-'}</span>
+                    <span class="w-48 flex-shrink-0">Telepon</span>
+                    <span class="mr-2 flex-shrink-0">:</span>
+                    <span>{appState.user.phone || '0838 9023 7082'}</span>
                 </div>
             </div>
 
             <p class="mb-4 text-justify">
-                Berdasarkan informasi yang saya dapatkan, saya bermaksud untuk melamar posisi <b>{appState.lamaran.position || 'Posisi'}</b> di <b>{appState.lamaran.company || 'Nama Perusahaan'}</b>. 
-                <span>{appState.lamaran.reason || 'Saya memiliki latar belakang pendidikan dan pengalaman yang relevan untuk berkontribusi bagi perusahaan.'}</span>
+                Sehubung dengan adanya informasi penerimaan karyawan di 
+                {#if appState.lamaran.company}
+                    <span class="font-bold">{appState.lamaran.company}</span>
+                {:else}
+                    Perusahaan yang Bapak / Ibu pimpin
+                {/if}
+                {#if appState.lamaran.source}
+                    yang saya dapatkan melalui <span class="font-bold">{appState.lamaran.source}</span>,
+                {:else}
+                    yang saya dapatkan,
+                {/if}
+                saya bermaksud mengajukan surat lamaran kerja 
+                {#if appState.lamaran.position}
+                    untuk mengisi posisi <span class="font-bold">{appState.lamaran.position}</span>
+                {:else}
+                    agar dapat diterima bekerja
+                {/if}
+                {#if appState.lamaran.company}
+                    di perusahaan tersebut.
+                {:else}
+                    di tempat Bapak / Ibu pimpin.
+                {/if}
             </p>
 
-            <p class="mb-8">Besar harapan saya untuk dapat mendiskusikan kualifikasi saya lebih lanjut dalam sesi wawancara. Atas perhatian Bapak/Ibu, saya ucapkan terima kasih.</p>
-
-            <div class="mt-12">
-                <p>Hormat saya,</p>
-                <div class="h-24"></div>
-                <p class="font-bold underline">{appState.user.name || 'Nama Lengkap'}</p>
-            </div>
+            <p class="mb-4 text-justify">
+                Sebagai bahan pertimbangan Bapak / Ibu, saya melampirkan berkas - berkas sebagai berikut :
+            </p>
 
             {#if appState.lamaran.attachments.length > 0}
-                <div class="mt-8 pt-6 border-t border-slate-100 text-sm text-slate-600">
-                    <p class="font-bold mb-2">Lampiran:</p>
+                <div class="ml-8 mb-6">
                     <ul class="list-none space-y-1">
                         {#each appState.lamaran.attachments as item, i}
                             <li>{i + 1}. {item}</li>
@@ -309,21 +415,29 @@
                     </ul>
                 </div>
             {/if}
-        </div>
 
-        <!-- VISUAL ATTACHMENTS (New Pages) -->
-        <div class="mt-10">
-            {#each appState.lamaran.attachments as item}
-                {#if appState.attachmentData[item]}
-                    <div class="print-page-container flex flex-col items-center">
-                        <p class="text-xs text-slate-400 mb-4 no-print text-center">--- Halaman Lampiran: {item} ---</p>
-                        <div class="max-w-full bg-white print:shadow-none shadow-sm border border-slate-100 rounded-lg overflow-hidden">
-                            <img src={appState.attachmentData[item]} alt={item} class="w-full h-auto object-contain max-h-[26cm]" />
-                        </div>
-                    </div>
-                {/if}
-            {/each}
+            <p class="mb-8 text-justify">Demikian surat lamaran ini saya buat, besar harapan saya untuk dapat bekerja di tempat yang Bapak / Ibu pimpin, saya ucapkan terima kasih.</p>
+
+            <div class="mt-12">
+                <p>Hormat Saya</p>
+                <div class="h-24"></div>
+                <p class="font-bold">{appState.user.name || 'Hanum Salsa Nabilah'}</p>
+            </div>
         </div>
+    </div>
+
+    <!-- VISUAL ATTACHMENTS (New Pages) -->
+    <div class="mt-10 {!printWithAttachments ? 'no-print' : ''}">
+        {#each appState.lamaran.attachments as item}
+            {#if appState.attachmentData[item]}
+                <div class="print-page-container flex flex-col items-center">
+                    <p class="text-xs text-slate-400 mb-4 no-print text-center">--- Halaman Lampiran: {item} ---</p>
+                    <div class="max-w-full bg-white print:shadow-none shadow-sm border border-slate-100 rounded-lg overflow-hidden">
+                        <img src={appState.attachmentData[item]} alt={item} class="w-full h-auto object-contain max-h-[26cm]" />
+                    </div>
+                </div>
+            {/if}
+        {/each}
     </div>
 </div>
 
